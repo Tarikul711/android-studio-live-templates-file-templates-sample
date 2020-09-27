@@ -1,0 +1,62 @@
+#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+
+#parse("File Header.java")
+
+class ${NAME} (var items: MutableList<${ITEM_CLASS}>, val itemClick: (${ITEM_CLASS}) -> Unit) : RecyclerView.Adapter<${NAME}.${VIEWHOLDER_CLASS}>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ${VIEWHOLDER_CLASS} {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.${LAYOUT_RES_ID}, parent, false)
+        return ${VIEWHOLDER_CLASS}(view, itemClick)
+    }
+
+    override fun onBindViewHolder(holder: ${VIEWHOLDER_CLASS}, position: Int) {
+        holder.bindView(items[position])
+    }
+
+    override fun getItemCount(): Int = items.size
+
+    /*Private Methods - START*/
+    fun clear(){
+        this.items.clear()
+        notifyDataSetChanged()
+    }
+    
+    fun replaceItems(items: MutableList<${ITEM_CLASS}>){
+        this.items.clear()
+        this.items = items
+        notifyDataSetChanged()
+    }
+    
+    fun addItem(item: ${ITEM_CLASS}){
+        this.items.add(item)
+        notifyItemInserted(itemCount)
+    }
+    
+    fun removeItem(item: ${ITEM_CLASS}) {
+        val position: Int? = this.items.indexOf(item)
+        position?.let { pos ->
+            this.items.removeAt(pos)
+            notifyItemRemoved(pos)
+        } ?: run {
+            Log.e("${NAME}", "Item not found !")
+        }
+    }
+    /*Private Methods - END*/
+
+    class ${VIEWHOLDER_CLASS}(val view: View, val itemClick: (${ITEM_CLASS}) -> Unit) : RecyclerView.ViewHolder(view) {
+        // here comes all the views / variables from view.findViewById()
+        // Example: val textView = view.findViewById(R.id.textView1)
+        fun bindView(item: ${ITEM_CLASS}) {
+            with(item) {
+                // here you do all kind of assignments and logics..
+                // for Example: textView.text = item.name or just name 
+                itemView.setOnClickListener { itemClick(this) }
+            }
+        }
+    }
+
+}
